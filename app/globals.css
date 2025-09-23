@@ -141,24 +141,24 @@
     @apply bg-primary/50;
   }
 
-  /* hide the injected "Built with v0" badge in bottom-right */
+  /* hide the injected "Built with v0" badge in bottom-right 
   a[href*="built-with-v0"],
   a[href*="v0.app/chat/api/open/built-with-v0"],
   a[aria-label*="Built with v0"],
   a[aria-label*="Built with V0"] {
     display: none !important;
   }
-
-  /* Fallback selectors in case the badge wrapper is different */
+*/
+  /* Fallback selectors in case the badge wrapper is different 
   #built-with-v0,
   [data-built-with-v0] {
     display: none !important;
   }
-
-  /* Optional: hide any container that directly wraps that link (best-effort) */
+*/
+  /* Optional: hide any container that directly wraps that link (best-effort) 
   div:has(> a[href*="built-with-v0"]) {
     display: none !important;
-  }
+  } */
 }
 
 /* Added smooth animations and transitions */
