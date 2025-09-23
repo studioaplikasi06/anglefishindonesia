@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://anglefish-indonesia.vercel.app/</loc>
+    <lastmod>2024-12-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://anglefish-indonesia.vercel.app/placeholder.svg?height=1200&width=630&query=elegant+angelfish+swimming+in+aquarium</image:loc>
+      <image:title>AngleFish Indonesia - Ikan Hias Angelfish</image:title>
+      <image:caption>Pusat informasi terlengkap tentang ikan hias Angelfish di Indonesia</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://anglefish-indonesia.vercel.app/about</loc>
+    <lastmod>2024-12-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://anglefish-indonesia.vercel.app/placeholder.svg?height=400&width=600&query=detailed+close+up+of+angelfish+showing+beautiful+fins+and+patterns</image:loc>
+      <image:title>Tentang Angelfish (Pterophyllum scalare)</image:title>
+      <image:caption>Panduan lengkap karakteristik, habitat, dan perawatan angelfish</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://anglefish-indonesia.vercel.app/gallery</loc>
+    <lastmod>2024-12-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://anglefish-indonesia.vercel.app/placeholder.svg?height=400&width=400&query=beautiful+silver+angelfish+with+black+stripes</image:loc>
+      <image:title>Galeri Foto Angelfish</image:title>
+      <image:caption>Koleksi foto angelfish terlengkap dengan berbagai jenis dan variasi</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://anglefish-indonesia.vercel.app/contact</loc>
+    <lastmod>2024-12-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
