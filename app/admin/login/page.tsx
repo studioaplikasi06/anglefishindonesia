@@ -33,9 +33,17 @@ export default function AdminLoginPage() {
         return
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      const data = await response.json()
+      if (data.token) {
+        localStorage.setItem("admin_token", data.token)
+        console.log("[v0] Token stored in localStorage")
+      }
+
+      // Wait for cookie to be set
+      await new Promise((resolve) => setTimeout(resolve, 500))
       router.push("/admin/dashboard")
     } catch (err) {
+      console.log("[v0] Login error:", err)
       setError("Terjadi kesalahan saat login")
     } finally {
       setIsLoading(false)
