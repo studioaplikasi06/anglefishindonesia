@@ -244,6 +244,24 @@ export default function ContactPage() {
                     </div>
                   ) : contactInfo ? (
                     <>
+                      {contactInfo.socialMedia?.whatsapp && (
+                        <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <MessageCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+                          <div className="flex-1">
+                            <p className="font-medium text-sm text-green-900 dark:text-green-100">WhatsApp</p>
+                            <p className="text-xs text-green-700 dark:text-green-300 mb-2">
+                              Chat langsung dengan expert kami
+                            </p>
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" asChild>
+                              <a href={contactInfo.socialMedia.whatsapp} target="_blank" rel="noopener noreferrer">
+                                <MessageCircle className="h-4 w-4 mr-2" />
+                                Hubungi via WhatsApp
+                              </a>
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex items-start gap-3">
                         <Mail className="h-5 w-5 text-primary mt-0.5" />
                         <div>
@@ -258,16 +276,11 @@ export default function ContactPage() {
                       <div className="flex items-start gap-3">
                         <Phone className="h-5 w-5 text-primary mt-0.5" />
                         <div>
-                          <p className="font-medium text-sm">WhatsApp</p>
-                          <a
-                            href={`https://wa.me/${contactInfo.phone.replace(/\D/g, "")}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-primary hover:underline"
-                          >
+                          <p className="font-medium text-sm">Telepon</p>
+                          <a href={`tel:${contactInfo.phone}`} className="text-sm text-primary hover:underline">
                             {contactInfo.phone}
                           </a>
-                          <p className="text-xs text-muted-foreground">Chat langsung dengan expert</p>
+                          <p className="text-xs text-muted-foreground">Hubungi langsung</p>
                         </div>
                       </div>
 
@@ -308,6 +321,14 @@ export default function ContactPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex gap-3 flex-wrap">
+                      {contactInfo.socialMedia?.whatsapp && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={contactInfo.socialMedia.whatsapp} target="_blank" rel="noopener noreferrer">
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            WhatsApp
+                          </a>
+                        </Button>
+                      )}
                       {contactInfo.socialMedia?.facebook && (
                         <Button variant="outline" size="sm" asChild>
                           <a href={contactInfo.socialMedia.facebook} target="_blank" rel="noopener noreferrer">

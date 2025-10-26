@@ -30,6 +30,7 @@ export interface ContactInfo {
     instagram?: string
     facebook?: string
     youtube?: string
+    whatsapp?: string
   }
   updatedAt: string
 }
@@ -73,6 +74,7 @@ let contactInfo: ContactInfo = {
   socialMedia: {
     instagram: "https://instagram.com/anglefish-indonesia",
     facebook: "https://facebook.com/anglefish-indonesia",
+    whatsapp: "https://wa.me/6281234567890",
   },
   updatedAt: new Date().toISOString(),
 }

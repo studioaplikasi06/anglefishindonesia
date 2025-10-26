@@ -5,7 +5,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, CheckCircle, Loader, Mail, Phone, MapPin, Instagram, Facebook, Youtube } from "lucide-react"
+import {
+  AlertCircle,
+  CheckCircle,
+  Loader,
+  Mail,
+  Phone,
+  MapPin,
+  Instagram,
+  Facebook,
+  Youtube,
+  MessageCircle,
+} from "lucide-react"
 import type { ContactInfo } from "@/lib/db"
 
 export function ContactEditor() {
@@ -126,8 +137,26 @@ export function ContactEditor() {
           </div>
 
           <div className="border-t pt-6">
-            <h3 className="font-semibold mb-4">Media Sosial</h3>
+            <h3 className="font-semibold mb-4">Media Sosial & Chat</h3>
             <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp Link
+                </label>
+                <Input
+                  value={contact.socialMedia?.whatsapp || ""}
+                  onChange={(e) =>
+                    setContact({
+                      ...contact,
+                      socialMedia: { ...contact.socialMedia, whatsapp: e.target.value },
+                    })
+                  }
+                  placeholder="https://wa.me/6281234567890"
+                />
+                <p className="text-xs text-muted-foreground">Format: https://wa.me/62812XXXXXXXX (tanpa tanda +)</p>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Instagram className="h-4 w-4" />
