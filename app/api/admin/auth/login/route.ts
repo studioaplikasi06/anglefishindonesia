@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid password" }, { status: 401 })
   }
 
-  // Generate simple token (in production, use JWT)
   const token = Buffer.from(`admin:${Date.now()}`).toString("base64")
 
   const response = NextResponse.json({ success: true, token })

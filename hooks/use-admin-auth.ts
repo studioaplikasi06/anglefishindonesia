@@ -11,12 +11,27 @@ export function useAdminAuth() {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const response = await fetch("/api/admin/auth/verify")
-        setIsAuthenticated(response.ok)
-        if (!response.ok) {
-          router.push("/admin/login")
+        let attempts = 0
+        const maxAttempts = 3
+        let response
+
+        while (attempts < maxAttempts) {
+          response = await fetch("/api/admin/auth/verify")
+          if (response.ok) {
+            setIsAuthenticated(true)
+            setIsLoading(false)
+            return
+          }
+          attempts++
+          if (attempts < maxAttempts) {
+            await new Promise((resolve) => setTimeout(resolve, 100))
+          }
         }
+
+        setIsAuthenticated(false)
+        router.push("/admin/login")
       } catch (error) {
+        console.log("[v0] Auth verification error:", error)
         setIsAuthenticated(false)
         router.push("/admin/login")
       } finally {
@@ -26,25 +41,6 @@ export function useAdminAuth() {
 
     verifyAuth()
   }, [router])
-
-  const login = async (password: string) => {
-    try {
-      const response = await fetch("/api/admin/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Invalid password")
-      }
-
-      setIsAuthenticated(true)
-      router.push("/admin/dashboard")
-    } catch (error) {
-      throw error
-    }
-  }
 
   const logout = async () => {
     try {
@@ -56,5 +52,5 @@ export function useAdminAuth() {
     }
   }
 
-  return { isAuthenticated, isLoading, login, logout }
+  return { isAuthenticated, isLoading, logout }
 }

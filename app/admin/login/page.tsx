@@ -33,6 +33,7 @@ export default function AdminLoginPage() {
         return
       }
 
+      await new Promise((resolve) => setTimeout(resolve, 100))
       router.push("/admin/dashboard")
     } catch (err) {
       setError("Terjadi kesalahan saat login")
