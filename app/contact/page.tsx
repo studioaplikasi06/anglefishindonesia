@@ -1,24 +1,16 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { toast } from "@/hooks/use-toast"
 import {
   Mail,
   Phone,
   MapPin,
   Clock,
-  Send,
   MessageCircle,
-  Fish,
   Facebook,
   Instagram,
   Youtube,
@@ -28,14 +20,6 @@ import {
 import type { ContactInfo } from "@/lib/db"
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null)
   const [isLoadingContact, setIsLoadingContact] = useState(true)
 
@@ -56,60 +40,6 @@ export default function ContactPage() {
 
     fetchContactInfo()
   }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    try {
-      const response = await fetch("/api/contact/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        toast({
-          title: "Pesan terkirim!",
-          description: result.message || "Terima kasih atas pesan Anda. Kami akan merespons dalam 24 jam.",
-        })
-
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: "",
-        })
-      } else {
-        toast({
-          title: "Gagal mengirim pesan",
-          description: result.error || "Terjadi kesalahan saat mengirim pesan",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
-      console.error("[v0] Contact form error:", error)
-      toast({
-        title: "Gagal mengirim pesan",
-        description: "Terjadi kesalahan saat mengirim pesan",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
-  }
 
   return (
     <div className="min-h-screen">
@@ -135,103 +65,8 @@ export default function ContactPage() {
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
-            {/* Contact Form */}
+            {/* Contact Information - Main */}
             <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Fish className="h-5 w-5 text-primary" />
-                    Kirim Pesan
-                  </CardTitle>
-                  <CardDescription>Isi form di bawah ini dan kami akan menghubungi Anda dalam 24 jam.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Nama Lengkap *</Label>
-                        <Input
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          placeholder="Masukkan nama lengkap Anda"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email *</Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="nama@email.com"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Nomor Telepon</Label>
-                        <Input
-                          id="phone"
-                          name="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+62 812-3456-7890"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="subject">Subjek *</Label>
-                        <Input
-                          id="subject"
-                          name="subject"
-                          value={formData.subject}
-                          onChange={handleChange}
-                          placeholder="Konsultasi perawatan angelfish"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Pesan *</Label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        placeholder="Ceritakan pertanyaan atau kendala Anda terkait angelfish..."
-                        rows={6}
-                        required
-                      />
-                    </div>
-
-                    <Button type="submit" size="lg" disabled={isSubmitting} className="w-full md:w-auto">
-                      {isSubmitting ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 mr-2 border-b-2 border-white"></div>
-                          Mengirim...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="mr-2 h-4 w-4" />
-                          Kirim Pesan
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Contact Info & FAQ */}
-            <div className="space-y-8">
-              {/* Contact Information */}
               <Card>
                 <CardHeader>
                   <CardTitle>Informasi Kontak</CardTitle>
@@ -311,7 +146,10 @@ export default function ContactPage() {
                   )}
                 </CardContent>
               </Card>
+            </div>
 
+            {/* Contact Info & FAQ */}
+            <div className="space-y-8">
               {/* Social Media */}
               {contactInfo && (
                 <Card>
