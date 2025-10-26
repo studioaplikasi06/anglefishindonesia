@@ -2,13 +2,14 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "@/hooks/use-toast"
 import {
   Mail,
@@ -22,7 +23,9 @@ import {
   Instagram,
   Youtube,
   CheckCircle,
+  AlertCircle,
 } from "lucide-react"
+import type { ContactInfo } from "@/lib/db"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -33,27 +36,72 @@ export default function ContactPage() {
     message: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null)
+  const [isLoadingContact, setIsLoadingContact] = useState(true)
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch("/api/admin/contact")
+        if (response.ok) {
+          const data = await response.json()
+          setContactInfo(data)
+        }
+      } catch (error) {
+        console.error("[v0] Failed to fetch contact info:", error)
+      } finally {
+        setIsLoadingContact(false)
+      }
+    }
+
+    fetchContactInfo()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      const response = await fetch("/api/contact/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-    toast({
-      title: "Pesan terkirim!",
-      description: "Terima kasih atas pesan Anda. Kami akan merespons dalam 24 jam.",
-    })
+      const result = await response.json()
 
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    })
-    setIsSubmitting(false)
+      if (response.ok) {
+        toast({
+          title: "Pesan terkirim!",
+          description: result.message || "Terima kasih atas pesan Anda. Kami akan merespons dalam 24 jam.",
+        })
+
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        })
+      } else {
+        toast({
+          title: "Gagal mengirim pesan",
+          description: result.error || "Terjadi kesalahan saat mengirim pesan",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("[v0] Contact form error:", error)
+      toast({
+        title: "Gagal mengirim pesan",
+        description: "Terjadi kesalahan saat mengirim pesan",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -190,74 +238,104 @@ export default function ContactPage() {
                   <CardDescription>Hubungi kami melalui berbagai channel</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-start gap-3">
-                    <Mail className="h-5 w-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Email</p>
-                      <p className="text-sm text-muted-foreground">info@anglefish-indonesia.com</p>
-                      <p className="text-xs text-muted-foreground">Respons dalam 24 jam</p>
+                  {isLoadingContact ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                     </div>
-                  </div>
+                  ) : contactInfo ? (
+                    <>
+                      <div className="flex items-start gap-3">
+                        <Mail className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">Email</p>
+                          <a href={`mailto:${contactInfo.email}`} className="text-sm text-primary hover:underline">
+                            {contactInfo.email}
+                          </a>
+                          <p className="text-xs text-muted-foreground">Respons dalam 24 jam</p>
+                        </div>
+                      </div>
 
-                  <div className="flex items-start gap-3">
-                    <Phone className="h-5 w-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">WhatsApp</p>
-                      <p className="text-sm text-muted-foreground">+62 812-3456-7890</p>
-                      <p className="text-xs text-muted-foreground">Chat langsung dengan expert</p>
-                    </div>
-                  </div>
+                      <div className="flex items-start gap-3">
+                        <Phone className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">WhatsApp</p>
+                          <a
+                            href={`https://wa.me/${contactInfo.phone.replace(/\D/g, "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline"
+                          >
+                            {contactInfo.phone}
+                          </a>
+                          <p className="text-xs text-muted-foreground">Chat langsung dengan expert</p>
+                        </div>
+                      </div>
 
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Lokasi</p>
-                      <p className="text-sm text-muted-foreground">Jakarta, Indonesia</p>
-                      <p className="text-xs text-muted-foreground">Kunjungan by appointment</p>
-                    </div>
-                  </div>
+                      <div className="flex items-start gap-3">
+                        <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">Lokasi</p>
+                          <p className="text-sm text-muted-foreground">{contactInfo.address}</p>
+                          <p className="text-xs text-muted-foreground">Kunjungan by appointment</p>
+                        </div>
+                      </div>
 
-                  <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium text-sm">Jam Operasional</p>
-                      <p className="text-sm text-muted-foreground">Senin - Jumat: 09.00 - 18.00</p>
-                      <p className="text-sm text-muted-foreground">Sabtu: 09.00 - 15.00</p>
-                      <p className="text-xs text-muted-foreground">Minggu: Tutup</p>
-                    </div>
-                  </div>
+                      <div className="flex items-start gap-3">
+                        <Clock className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">Jam Operasional</p>
+                          <p className="text-sm text-muted-foreground">Senin - Jumat: 09.00 - 18.00</p>
+                          <p className="text-sm text-muted-foreground">Sabtu: 09.00 - 15.00</p>
+                          <p className="text-xs text-muted-foreground">Minggu: Tutup</p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <Alert variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>Gagal memuat informasi kontak</AlertDescription>
+                    </Alert>
+                  )}
                 </CardContent>
               </Card>
 
               {/* Social Media */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Follow Kami</CardTitle>
-                  <CardDescription>Update terbaru dan tips angelfish</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-3">
-                    <Button variant="outline" size="sm" asChild>
-                      <a href="#" target="_blank" rel="noopener noreferrer">
-                        <Facebook className="h-4 w-4 mr-2" />
-                        Facebook
-                      </a>
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <a href="#" target="_blank" rel="noopener noreferrer">
-                        <Instagram className="h-4 w-4 mr-2" />
-                        Instagram
-                      </a>
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <a href="#" target="_blank" rel="noopener noreferrer">
-                        <Youtube className="h-4 w-4 mr-2" />
-                        YouTube
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              {contactInfo && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Follow Kami</CardTitle>
+                    <CardDescription>Update terbaru dan tips angelfish</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex gap-3 flex-wrap">
+                      {contactInfo.socialMedia?.facebook && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={contactInfo.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
+                            <Facebook className="h-4 w-4 mr-2" />
+                            Facebook
+                          </a>
+                        </Button>
+                      )}
+                      {contactInfo.socialMedia?.instagram && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={contactInfo.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
+                            <Instagram className="h-4 w-4 mr-2" />
+                            Instagram
+                          </a>
+                        </Button>
+                      )}
+                      {contactInfo.socialMedia?.youtube && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={contactInfo.socialMedia.youtube} target="_blank" rel="noopener noreferrer">
+                            <Youtube className="h-4 w-4 mr-2" />
+                            YouTube
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* FAQ Quick */}
               <Card>
